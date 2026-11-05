@@ -7,7 +7,8 @@ URL/path, regex, and modifier rules are skipped instead of broadening blocking.
 from __future__ import annotations
 
 import argparse
-from collections import Counter, defaultdict
+from collections import defaultdict
+from bisect import bisect_left
 from datetime import datetime, timezone
 import hashlib
 import ipaddress
@@ -17,15 +18,18 @@ from pathlib import Path
 import re
 import shutil
 import tempfile
+import time
 import urllib.error
 import urllib.request
+
+from catalog import ALIASES, make_index
 
 ROOT = Path(__file__).resolve().parent.parent
 DOMAIN = re.compile(r"^(?:[a-z0-9_-]+\.)+[a-z0-9_-]+$", re.I)
 ADBLOCK = re.compile(r"^(\|\||@@\|\|)([a-z0-9._-]+)\^(?:$|\$([a-z,~_-]+))", re.I)
 SAFE_HOST_IPS = {"0.0.0.0", "127.0.0.1", "::", "::1"}
 MAX_BYTES = 20 * 1024 * 1024
-SRS_TAGS = ["block-ads", "block-ads-ir", "block-ads-global", "direct-iran-domains", "direct-iran-ips", "direct-iran-all"]
+SRS_TAGS = list(dict.fromkeys(ALIASES.values()))
 
 
 def normalize_domain(token: str) -> str | None:
@@ -136,14 +140,22 @@ def fetch_source(source: dict, fixture_dir: Path | None) -> str:
     if not url.startswith("https://"):
         raise ValueError("Source URL must be HTTPS")
     request = urllib.request.Request(url, headers={"User-Agent": "IranShieldRules/1.0 (+github actions)", "Accept": "text/plain, application/json, */*"})
-    with urllib.request.urlopen(request, timeout=50) as r:
-        if r.status != 200:
-            raise ValueError(f"Unexpected status: {r.status}")
-        # Hard size limit even when Content-Length is absent or forged.
-        data = r.read(MAX_BYTES + 1)
-        if len(data) > MAX_BYTES:
-            raise ValueError(f"Source too large: {source['id']}")
-    return data.decode("utf-8-sig", errors="replace")
+    for attempt in range(3):
+        try:
+            with urllib.request.urlopen(request, timeout=45) as r:
+                if r.status != 200 or not r.geturl().startswith("https://"):
+                    raise ValueError("Non-HTTPS redirect or bad response status")
+                data = r.read(MAX_BYTES + 1)
+                if len(data) > MAX_BYTES:
+                    raise ValueError(f"Source too large: {source['id']}")
+            return data.decode("utf-8-sig", errors="replace")
+        except (urllib.error.URLError, TimeoutError, OSError) as exc:
+            if isinstance(exc, urllib.error.HTTPError) and exc.code not in (408, 429, 500, 502, 503, 504):
+                raise
+            if attempt == 2:
+                raise
+            time.sleep(1 + 2 * attempt)
+    raise RuntimeError("Unreachable retry logic")
 
 
 def collapse_ips(values: set[str]) -> list[str]:
@@ -245,10 +257,16 @@ def build(out: Path, fixture_dir: Path | None, repository: str, min_total: bool,
     blocks_global = collected["ads-global"]
     blocks_manual = local("blocklist.txt")
     allowlist = local("allowlist.txt") | all_exceptions
-    # Safety: broad parent blocking must be dropped when it would also cover
-    # an exception. This intentionally errs toward fewer false positives.
+    # Respect ABP exceptions efficiently, even with very large blocklists.
+    # A blocked parent of an allowed child is also rejected to prevent breakage.
+    reverse_exceptions = sorted(domain[::-1] for domain in allowlist)
     def permitted(domain: str) -> bool:
-        return not any(suffix_overlaps(domain, exception) for exception in allowlist)
+        labels = domain.split(".")
+        if any(".".join(labels[i:]) in allowlist for i in range(len(labels))):
+            return False
+        key = domain[::-1] + "."
+        i = bisect_left(reverse_exceptions, key)
+        return not (i < len(reverse_exceptions) and reverse_exceptions[i].startswith(key))
     blocks_ir = {d for d in blocks_ir if permitted(d)}
     blocks_global = {d for d in blocks_global if permitted(d)}
     blocks_manual = {d for d in blocks_manual if permitted(d)}
@@ -284,18 +302,9 @@ def build(out: Path, fixture_dir: Path | None, repository: str, min_total: bool,
         }))
         (stage / "xray/iranshield-geoip.dat").write_bytes(make_geoip({"IR": ir_ips}))
         base = f"https://raw.githubusercontent.com/{repository}/{branch}/dist/sing-box/"
-        aliases = {
-            "geosite-category-ads-all": "block-ads", "geosite-ads": "block-ads",
-            "geosite-ads-ir": "block-ads-ir", "geosite-ads-global": "block-ads-global",
-            "geosite-ir": "direct-iran-domains", "geoip-ir": "direct-iran-ips",
-            "block-ads": "block-ads", "block-ads-ir": "block-ads-ir",
-            "block-ads-global": "block-ads-global", "direct-iran-domains": "direct-iran-domains",
-            "direct-iran-ips": "direct-iran-ips", "direct-iran-all": "direct-iran-all",
-        }
-        # NekoBox (including this fork) uses a flat name -> remote SRS URL map.
-        # Keep copies at dist/srslist.json, dist/nekobox/srslist.json and the
-        # repository root (published by the workflow).
-        neko_srslist = {alias: base + target + ".srs" for alias, target in aliases.items()}
+        # Initial indexes for offline fixtures; publish.py regenerates the SAME
+        # mapping only after all SRS binaries have been compiled and verified.
+        neko_srslist = make_index(repository, branch)
         write_json(stage / "srslist.json", neko_srslist)
         write_json(stage / "nekobox/srslist.json", neko_srslist)
         plain = stage / "plain"
@@ -347,7 +356,7 @@ def build(out: Path, fixture_dir: Path | None, repository: str, min_total: bool,
         files = {str(p.relative_to(stage)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(stage.rglob("*")) if p.is_file()}
         manifest = {
             "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-            "repository": repository,
+            "repository": repository, "branch": branch,
             "counts": {"ads": len(ads), "ads_ir": len(blocks_ir), "ads_global": len(blocks_global), "iran_domains": len(ir_domains), "iran_ip_cidrs": len(ir_ips), "allowlist": len(allowlist)},
             "sources": reports, "sha256": files,
             "notice": "Only DNS/host-level block rules converted; cosmetic, URL-path and complex ABP rules intentionally omitted.",

@@ -13,6 +13,8 @@ Full Persian instructions: [README.md](README.md). Repository code: GPL-3.0; ups
 
 ## NekoBox SRS index
 
-The files `srslist.json`, `nekobox/srslist.json`, and `dist/nekobox/srslist.json` are a flat mapping of rule-set names to the generated SRS URLs. The workflow refreshes them on days 1 and 15, at 03:17 UTC, and supports manual dispatch. Initial placeholder `YOUR_USERNAME` URLs are replaced after the first successful workflow run.
+The files `srslist.json`, `nekobox/srslist.json`, and `dist/nekobox/srslist.json` are a flat mapping of rule-set names to the generated SRS URLs. The workflow refreshes them on days 1 and 15, at 03:17 UTC, and supports manual dispatch. This package starts with `ReCode1324/IranShield-Rules` URLs; the workflow regenerates them from its actual GitHub repository settings after a successful run.
 
 After publishing your repo, use `https://raw.githubusercontent.com/OWNER/REPO/main/srslist.json`. This JSON **is not a proxy subscription** or a complete route configuration. NekoBox must load/refresh the mapping or use its remote SRS handling; merely entering the index URL in a proxy-subscription field does not enable blocking. Connect ad rules to reject and Iranian domain/IP rules to direct.
+
+**Fix for November 5, 2026:** The index publisher lives in `scripts/publish.py`, uses the shared `scripts/catalog.py` mapping, and is regression-tested directly. When updating, upload the full project together (not only the workflow YAML). See `docs/FIX-NEKOBOX-INDEX.md`.

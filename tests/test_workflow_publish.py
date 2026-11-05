@@ -1,63 +1,133 @@
-"""Prevent regressions in the self-contained GitHub Actions NekoBox publisher."""
+"""Exercise production publication code, not brittle YAML command extraction."""
 from __future__ import annotations
 
 import json
 import os
 from pathlib import Path
 import subprocess
+import sys
 import tempfile
 import unittest
 
-
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / 'scripts'))
+from build import build
+from catalog import ALIASES, make_index
+from finalize import finalize
+from publish import publish
+
 WORKFLOW = ROOT / '.github/workflows/update-rules.yml'
-SRS_NAMES = [
-    'block-ads', 'block-ads-ir', 'block-ads-global',
-    'direct-iran-domains', 'direct-iran-ips', 'direct-iran-all',
-]
+TAGS = sorted(set(ALIASES.values()))
 
 
-def publisher_command():
-    """Extract the actual command from the Workflow, without needing PyYAML."""
-    workflow = WORKFLOW.read_text(encoding='utf-8')
-    marker = "          python - <<'PY'\n"
-    if marker not in workflow:
-        raise AssertionError('No self-contained NekoBox publisher in Workflow')
-    block = workflow.split(marker, 1)[1].split('\n          PY\n', 1)[0]
-    return "python - <<'PY'\n" + '\n'.join(line[10:] for line in block.splitlines()) + '\nPY\n'
+def compiled_fixtures(path: Path):
+    """Fake binaries with correct header for isolated publisher tests only.
+
+    These are NOT claimed to be genuine compiled SRS files; GitHub Actions
+    compiles and decompiles real binaries with the official sing-box tool.
+    """
+    for name in TAGS:
+        (path / 'sing-box' / f'{name}.srs').write_bytes(b'SRS\x02fixture-payload')
 
 
 class NekoBoxPublisherTests(unittest.TestCase):
     def test_twice_monthly_schedule(self):
-        self.assertIn("cron: '17 3 1,15 * *'", WORKFLOW.read_text())
+        workflow = WORKFLOW.read_text(encoding='utf-8')
+        self.assertIn("cron: '17 3 1,15 * *'", workflow)
+        self.assertIn('workflow_dispatch:', workflow)
+        self.assertIn('contents: write', workflow)
+        self.assertIn('python scripts/publish.py --out dist', workflow)
+        self.assertIn('python -m unittest discover -s tests -v', workflow)
+        self.assertIn('rule-set decompile', workflow)
+        self.assertIn('git push origin', workflow)
 
-    def test_publish_from_compiled_binaries_with_missing_folder(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            work = Path(tmp)
-            (work / 'dist/sing-box').mkdir(parents=True)
-            for name in SRS_NAMES:
-                (work / 'dist/sing-box' / (name + '.srs')).write_bytes(b'SRS\x00simulated-data')
-            env = os.environ.copy()
-            env.update(GITHUB_REPOSITORY='ReCode1324/IranShield-Rules', GITHUB_REF_NAME='main')
-            result = subprocess.run(['bash', '-e', '-c', publisher_command()],
-                                    cwd=work, env=env, text=True, capture_output=True)
-            self.assertEqual(result.returncode, 0, result.stderr)
-            paths = [work / name for name in (
+    def test_publish_then_finalize_exact_reused_indexes(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            home = Path(temporary)
+            output = home / 'dist'
+            build(output, ROOT / 'tests/fixtures', 'ReCode1324/IranShield-Rules', False)
+            compiled_fixtures(output)
+            # Purposely delete all previously generated indexes and their folders.
+            for path in [output / 'srslist.json', output / 'nekobox/srslist.json']:
+                path.unlink()
+            (output / 'nekobox').rmdir()
+            index = publish(output, 'ReCode1324/IranShield-Rules', 'main', root=home)
+            expected = make_index('ReCode1324/IranShield-Rules', 'main')
+            self.assertEqual(index, expected)
+            self.assertEqual(len(index), 12)
+            self.assertEqual(len(set(ALIASES.values())), 6)
+            paths = [home / x for x in (
                 'srslist.json', 'nekobox/srslist.json',
                 'dist/srslist.json', 'dist/nekobox/srslist.json',
             )]
-            self.assertTrue(all(p.exists() for p in paths))
             self.assertEqual(len({p.read_bytes() for p in paths}), 1)
-            index = json.loads(paths[0].read_text())
-            self.assertEqual(len(index), 12)
-            self.assertEqual(index['block-ads'],
-                'https://raw.githubusercontent.com/ReCode1324/IranShield-Rules/main/dist/sing-box/block-ads.srs')
+            self.assertEqual(json.loads(paths[0].read_text()), expected)
+            manifest = finalize(output)
+            for name in TAGS:
+                self.assertIn(f'sing-box/{name}.srs', manifest['sha256'])
+            self.assertIn('srslist.json', manifest['sha256'])
+            self.assertIn('nekobox/srslist.json', manifest['sha256'])
+            self.assertEqual(index['geoip-ir'],
+                'https://raw.githubusercontent.com/ReCode1324/IranShield-Rules/main/dist/sing-box/direct-iran-ips.srs')
 
-            (work / 'dist/sing-box/direct-iran-ips.srs').unlink()
-            missing = subprocess.run(['bash', '-e', '-c', publisher_command()],
-                                     cwd=work, env=env, text=True, capture_output=True)
-            self.assertNotEqual(missing.returncode, 0)
-            self.assertIn('direct-iran-ips.srs', missing.stderr)
+    def test_broken_or_missing_binary_fails_without_overwriting_existing_index(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            home = Path(temporary)
+            output = home / 'dist'
+            build(output, ROOT / 'tests/fixtures', 'user/repo', False)
+            compiled_fixtures(output)
+            publish(output, 'user/repo', 'main', root=home)
+            previous = (home / 'srslist.json').read_bytes()
+            file = output / 'sing-box/direct-iran-ips.srs'
+            file.unlink()
+            with self.assertRaisesRegex(RuntimeError, 'direct-iran-ips.srs'):
+                publish(output, 'user/repo', 'main', root=home)
+            self.assertEqual(previous, (home / 'srslist.json').read_bytes())
+            file.write_bytes(b'NOT_SRS-file-bad')
+            with self.assertRaisesRegex(RuntimeError, 'Invalid SRS magic'):
+                publish(output, 'user/repo', 'main', root=home)
+            self.assertEqual(previous, (home / 'srslist.json').read_bytes())
+
+    def test_invalid_source_json_fails_closed(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            home = Path(temporary)
+            output = home / 'dist'
+            build(output, ROOT / 'tests/fixtures', 'user/repo', False)
+            compiled_fixtures(output)
+            source = output / 'sing-box/block-ads.json'
+            source.write_text('{"version": 2, "rules": []}\n')
+            with self.assertRaisesRegex(RuntimeError, 'Invalid/empty source JSON'):
+                publish(output, 'user/repo', 'main', root=home)
+            self.assertFalse((home / 'srslist.json').exists())
+
+    def test_repository_and_branch_validation(self):
+        with self.assertRaises(ValueError):
+            make_index('invalid-owner-repo', 'main')
+        with self.assertRaises(ValueError):
+            make_index('user/repo', '../../bad')
+        self.assertIn('/ReCode1324/IranShield-Rules/main/',
+            make_index('ReCode1324/IranShield-Rules', 'main')['block-ads'])
+
+    def test_cli_publisher_executes_real_production_script(self):
+        import shutil
+        with tempfile.TemporaryDirectory() as temporary:
+            home = Path(temporary)
+            app = home / 'project'
+            (app / 'scripts').mkdir(parents=True)
+            for filename in ('publish.py', 'catalog.py'):
+                shutil.copyfile(ROOT / 'scripts' / filename, app / 'scripts' / filename)
+            output = home / 'dist'
+            build(output, ROOT / 'tests/fixtures', 'user/repo', False)
+            compiled_fixtures(output)
+            process = subprocess.run(
+                [sys.executable, str(app / 'scripts/publish.py'),
+                 '--out', str(output), '--repository', 'ReCode1324/IranShield-Rules', '--branch', 'main'],
+                cwd=home, capture_output=True, text=True)
+            self.assertEqual(process.returncode, 0, process.stderr)
+            self.assertIn('Published 12 NekoBox names', process.stdout)
+            self.assertTrue((app / 'srslist.json').is_file())
+            self.assertEqual(json.loads((app / 'srslist.json').read_text()),
+                make_index('ReCode1324/IranShield-Rules', 'main'))
 
 
 if __name__ == '__main__':
