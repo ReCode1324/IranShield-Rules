@@ -57,7 +57,7 @@ jobs:
         run: python scripts/finalize.py dist
 
       - name: Publish NekoBox srslist.json at the repository root
-        run: python scripts/publish.py --dist dist
+        run: python scripts/publish.py --out dist
 
       - name: Commit updated rules into this repository
         run: |
