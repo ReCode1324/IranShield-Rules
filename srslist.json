@@ -1,14 +1,14 @@
 {
-  "geosite-category-ads-all": "https://raw.githubusercontent.com/YOUR_USERNAME/IranShield-Rules/main/dist/sing-box/block-ads.srs",
-  "geosite-ads": "https://raw.githubusercontent.com/YOUR_USERNAME/IranShield-Rules/main/dist/sing-box/block-ads.srs",
-  "geosite-ads-ir": "https://raw.githubusercontent.com/YOUR_USERNAME/IranShield-Rules/main/dist/sing-box/block-ads-ir.srs",
-  "geosite-ads-global": "https://raw.githubusercontent.com/YOUR_USERNAME/IranShield-Rules/main/dist/sing-box/block-ads-global.srs",
-  "geosite-ir": "https://raw.githubusercontent.com/YOUR_USERNAME/IranShield-Rules/main/dist/sing-box/direct-iran-domains.srs",
-  "geoip-ir": "https://raw.githubusercontent.com/YOUR_USERNAME/IranShield-Rules/main/dist/sing-box/direct-iran-ips.srs",
-  "block-ads": "https://raw.githubusercontent.com/YOUR_USERNAME/IranShield-Rules/main/dist/sing-box/block-ads.srs",
-  "block-ads-ir": "https://raw.githubusercontent.com/YOUR_USERNAME/IranShield-Rules/main/dist/sing-box/block-ads-ir.srs",
-  "block-ads-global": "https://raw.githubusercontent.com/YOUR_USERNAME/IranShield-Rules/main/dist/sing-box/block-ads-global.srs",
-  "direct-iran-domains": "https://raw.githubusercontent.com/YOUR_USERNAME/IranShield-Rules/main/dist/sing-box/direct-iran-domains.srs",
-  "direct-iran-ips": "https://raw.githubusercontent.com/YOUR_USERNAME/IranShield-Rules/main/dist/sing-box/direct-iran-ips.srs",
-  "direct-iran-all": "https://raw.githubusercontent.com/YOUR_USERNAME/IranShield-Rules/main/dist/sing-box/direct-iran-all.srs"
+  "geosite-category-ads-all": "https://raw.githubusercontent.com/ReCode1324/IranShield-Rules/main/dist/sing-box/block-ads.srs",
+  "geosite-ads": "https://raw.githubusercontent.com/ReCode1324/IranShield-Rules/main/dist/sing-box/block-ads.srs",
+  "geosite-ads-ir": "https://raw.githubusercontent.com/ReCode1324/IranShield-Rules/main/dist/sing-box/block-ads-ir.srs",
+  "geosite-ads-global": "https://raw.githubusercontent.com/ReCode1324/IranShield-Rules/main/dist/sing-box/block-ads-global.srs",
+  "geosite-ir": "https://raw.githubusercontent.com/ReCode1324/IranShield-Rules/main/dist/sing-box/direct-iran-domains.srs",
+  "geoip-ir": "https://raw.githubusercontent.com/ReCode1324/IranShield-Rules/main/dist/sing-box/direct-iran-ips.srs",
+  "block-ads": "https://raw.githubusercontent.com/ReCode1324/IranShield-Rules/main/dist/sing-box/block-ads.srs",
+  "block-ads-ir": "https://raw.githubusercontent.com/ReCode1324/IranShield-Rules/main/dist/sing-box/block-ads-ir.srs",
+  "block-ads-global": "https://raw.githubusercontent.com/ReCode1324/IranShield-Rules/main/dist/sing-box/block-ads-global.srs",
+  "direct-iran-domains": "https://raw.githubusercontent.com/ReCode1324/IranShield-Rules/main/dist/sing-box/direct-iran-domains.srs",
+  "direct-iran-ips": "https://raw.githubusercontent.com/ReCode1324/IranShield-Rules/main/dist/sing-box/direct-iran-ips.srs",
+  "direct-iran-all": "https://raw.githubusercontent.com/ReCode1324/IranShield-Rules/main/dist/sing-box/direct-iran-all.srs"
 }
