@@ -1,0 +1,84 @@
+name: Twice-Monthly IranShield Rules Update
+
+"on":
+  schedule:
+    # Twice a month, on the 1st and 15th at 03:17 UTC.
+    - cron: '17 3 1,15 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: iranshield-twice-monthly-build
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run offline regression tests
+        run: python -m unittest discover -s tests -v
+
+      - name: Build verified domain and IP assets from configured upstreams
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: python scripts/build.py --out dist
+
+      - name: Audit newly updated GitHub adblock repositories (not auto-imported)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/discover.py dist/discovered-sources.json
+
+      - name: Install pinned official sing-box release, checking SHA-256
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python scripts/install_sing_box.py
+          "$HOME/.local/bin/sing-box" version
+
+      - name: Compile every source JSON into a binary SRS
+        run: |
+          set -euo pipefail
+          for json in dist/sing-box/*.json; do
+            "$HOME/.local/bin/sing-box" rule-set compile --output "${json%.json}.srs" "$json"
+          done
+
+      - name: Check output completeness and hashes
+        run: python scripts/finalize.py dist
+
+      - name: Publish NekoBox srslist.json at the repository root
+        run: |
+          cp dist/nekobox/srslist.json srslist.json
+          cp dist/nekobox/srslist.json nekobox/srslist.json
+          python -m json.tool srslist.json >/dev/null
+          cmp srslist.json dist/srslist.json
+          cmp srslist.json nekobox/srslist.json
+
+      - name: Commit updated rules into this repository
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add dist srslist.json nekobox/srslist.json
+          if ! git diff --staged --quiet; then
+            git commit -m "chore(rules): twice-monthly refresh $(date -u +%Y-%m-%d)"
+            git push
+          else
+            echo 'No changes to publish.'
+          fi
+
+      - name: Upload downloadable build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: iranshield-rules
+          path: dist/
+          retention-days: 30
