@@ -1,0 +1,101 @@
+{
+  "generated_at_utc": "2026-11-05T20:43:20.817768+00:00",
+  "repository": "ReCode1324/IranShield-Rules",
+  "branch": "main",
+  "counts": {
+    "ads": 474171,
+    "ads_ir": 503,
+    "ads_global": 473854,
+    "iran_domains": 127070,
+    "iran_ip_cidrs": 2324,
+    "allowlist": 11
+  },
+  "sources": [
+    {
+      "id": "adguard_dns",
+      "status": "ok",
+      "items": 188915,
+      "url": "https://adguardteam.github.io/AdGuardSDNSFilter/Filters/filter.txt",
+      "license": "GPL-3.0",
+      "sha256": "19fdc4356c2db8197121541a463c7ad8e3bc150f0435ca77005678ebe4c8afe6"
+    },
+    {
+      "id": "stevenblack_hosts",
+      "status": "ok",
+      "items": 77759,
+      "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts",
+      "license": "MIT; upstream components may have distinct licenses",
+      "sha256": "0d81148f9990ecbde614ba1a135f81113fbb5f9972e783af22ff1c6dadb57508"
+    },
+    {
+      "id": "goodbyeads",
+      "status": "ok",
+      "items": 277778,
+      "url": "https://raw.githubusercontent.com/jerryn70/GoodbyeAds/master/Hosts/GoodbyeAds.txt",
+      "license": "MIT",
+      "sha256": "7dfc7f6e007eaf514c8ff20c462dfdd76e4b8926defdecc66d62ca747d1537c2"
+    },
+    {
+      "id": "ubopa",
+      "status": "ok",
+      "items": 5,
+      "url": "https://raw.githubusercontent.com/nimasaj/uBOPa/master/uBOPa.txt",
+      "license": "MIT",
+      "sha256": "78685d019e1d3fe4ee340b5101b0b5c744f5ddd10a5d1daa35581e2e7110362b"
+    },
+    {
+      "id": "iran_hosted_ads",
+      "status": "ok",
+      "items": 502,
+      "url": "https://raw.githubusercontent.com/bootmortis/iran-hosted-domains/release/clash_rules_ads.txt",
+      "license": "MIT",
+      "sha256": "9ddf13a01197446671f50d8cc4a3da93a118bdf5faf05117921ad96d03bbbc37"
+    },
+    {
+      "id": "iran_hosted_domains",
+      "status": "ok",
+      "items": 127069,
+      "url": "https://raw.githubusercontent.com/bootmortis/iran-hosted-domains/release/domains.txt",
+      "license": "MIT",
+      "sha256": "8fc54cd39c85a3b7de33c490fd53d0ffd46c1fd1abb16631bd98f6dbdb4b78f2"
+    },
+    {
+      "id": "ripe_iran_resources",
+      "status": "ok",
+      "items": 2544,
+      "url": "https://stat.ripe.net/data/country-resource-list/data.json?resource=ir",
+      "license": "RIPEstat data: verify terms for your use",
+      "sha256": "dca4459d2ca46e68a4ce5636f62f3fbdf9187e0d61887d8e779f2dc15e064316"
+    }
+  ],
+  "sha256": {
+    "assets.json": "e1a106ef0a527af30b4968c9c14ffe8c28e5ac0d4c2ed5a4013a74eb3b143860",
+    "discovered-sources.json": "41da20d38d68c2fa4e483a43e6a5c03dfdce82da5dbc58293ef294935a18edc6",
+    "examples/singbox-route-fragment.json": "c453472db7767e35ca41273819a759ddffe9ee297c07cf6eb3da874e80f80bba",
+    "examples/v2rayN-custom-routing.json": "4412c3a86a461a02add85a340ff27268c3b4d3df1d1b6556014beeb9edfc3098",
+    "examples/xray-routing-fragment.json": "70f3d661439445712bddc0c0abc5012755cc34d41c0fd1302af1fe5b709af73b",
+    "hosts/ads-hosts.txt": "5b51399630a36f3966f706dcd7f21e2082845af8e5b718cf82c5ebf30cfee92f",
+    "nekobox/srslist.json": "030548dcf275cdd1cfe040531cce77dc619aa20500410b8d71578e37e9308586",
+    "plain/ads-global.txt": "0047f27d0993b352e123596eac93100202d4e84298679f59327558db27fb3da4",
+    "plain/ads-ir.txt": "c8ce92d3bdcb974d23bb30374c6604b08979d47699213f3583b06851aab1ba07",
+    "plain/ads.txt": "caca9f4d4f02f6989742882c233057f59d1764d02e954851c9714c41ec0c3cfb",
+    "plain/iran-domains.txt": "bda667738e660a3c9b494df0817f06e6277088371341ad8619f706c14b648b72",
+    "plain/iran-ips.txt": "b90827234c9160d2cff202a068baf47be7a76df1e5720aa0d77c2ca87116d7e8",
+    "sing-box/block-ads-global.json": "0eb302448718e9c950c75cd2c18eb5c4fc961b784e212372bb560ed79707ba01",
+    "sing-box/block-ads-global.srs": "1b6ec33690990d26924bbd769b986aa4c5a1f58c5412953d1575091396f79118",
+    "sing-box/block-ads-ir.json": "113a5821767af6bbe7ccfce044aced257c6116151032be57d693acca94f79a57",
+    "sing-box/block-ads-ir.srs": "a20eb719beb15b67e648317950a5ba07a7f4dd26706a761a2d3260c00c05e681",
+    "sing-box/block-ads.json": "52797ff13d566c9dffb627913caf7c4a01a2e9a670d19c7861c9162200f6c95f",
+    "sing-box/block-ads.srs": "f69b9eef57a0967fec5b5781ab0c90f79ceebdbbd35d9da09f3f3996af6328e6",
+    "sing-box/direct-iran-all.json": "7d00184002803b8530dc8247cc0878afc9c46add13647b735673e000945123cd",
+    "sing-box/direct-iran-all.srs": "3a075a669dd454cdf6b94ed45974c69723ff510fe045b825a53607cb0c84b659",
+    "sing-box/direct-iran-domains.json": "481f6342f4812b07cacd9a9bb10376001b80674d3ea64d1a092343fc99cc8531",
+    "sing-box/direct-iran-domains.srs": "e5de4e3b097f208b39e872abb3a0374bb6340da4218ee87351dc7d29c74e94f5",
+    "sing-box/direct-iran-ips.json": "f9c600387f8b027cc5ab58035e3d44b58a054100b5e69aa60aad7641980739ed",
+    "sing-box/direct-iran-ips.srs": "e6421438a2c7fc3719e349c9e9dafdab060ebd7bf2de2166cb853befe83a21d8",
+    "srslist.json": "030548dcf275cdd1cfe040531cce77dc619aa20500410b8d71578e37e9308586",
+    "xray/iranshield-geoip.dat": "6ce96e338efa06edf69dd5b5bbb1ff1e1ef3a4193f675dae50dd0867c9d42c5c",
+    "xray/iranshield-geosite.dat": "5b24c52511efd519c2ebfdfc67522a1fe5e8a6990bf20f254e39a54a7aa57d96"
+  },
+  "notice": "Only DNS/host-level block rules converted; cosmetic, URL-path and complex ABP rules intentionally omitted."
+}

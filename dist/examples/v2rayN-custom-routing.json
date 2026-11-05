@@ -1,0 +1,34 @@
+[
+  {
+    "remarks": "IranShield BLOCK Ads",
+    "enabled": true,
+    "domain": [
+      "ext:iranshield-geosite.dat:ADS"
+    ],
+    "outboundTag": "block"
+  },
+  {
+    "remarks": "IranShield DIRECT Private",
+    "enabled": true,
+    "ip": [
+      "geoip:private"
+    ],
+    "outboundTag": "direct"
+  },
+  {
+    "remarks": "IranShield DIRECT Domains",
+    "enabled": true,
+    "domain": [
+      "ext:iranshield-geosite.dat:IR"
+    ],
+    "outboundTag": "direct"
+  },
+  {
+    "remarks": "IranShield DIRECT IPs",
+    "enabled": true,
+    "ip": [
+      "ext:iranshield-geoip.dat:IR"
+    ],
+    "outboundTag": "direct"
+  }
+]

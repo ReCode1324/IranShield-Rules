@@ -1,0 +1,227 @@
+{
+  "scanned_at": "2026-11-05T20:43:22.968266+00:00",
+  "queries": [
+    "topic:adblock stars:>=40 pushed:>=2026-05-09 archived:false",
+    "topic:iran topic:adblock pushed:>=2026-05-09 archived:false"
+  ],
+  "candidates": [
+    {
+      "repo": "hagezi/dns-blocklists",
+      "homepage": "https://github.com/hagezi/dns-blocklists",
+      "stars": 28242,
+      "pushed_at": "2026-11-05T17:23:33Z",
+      "license": "GPL-3.0",
+      "review_required": true
+    },
+    {
+      "repo": "217heidai/adblockfilters",
+      "homepage": "https://github.com/217heidai/adblockfilters",
+      "stars": 7776,
+      "pushed_at": "2026-11-05T16:19:54Z",
+      "license": "GPL-3.0",
+      "review_required": true
+    },
+    {
+      "repo": "AdguardTeam/AdguardFilters",
+      "homepage": "https://github.com/AdguardTeam/AdguardFilters",
+      "stars": 4592,
+      "pushed_at": "2026-11-05T19:38:17Z",
+      "license": "GPL-3.0",
+      "review_required": true
+    },
+    {
+      "repo": "irbis-sh/zen-desktop",
+      "homepage": "https://github.com/irbis-sh/zen-desktop",
+      "stars": 4354,
+      "pushed_at": "2026-11-05T19:46:05Z",
+      "license": "MIT",
+      "review_required": true
+    },
+    {
+      "repo": "EnergizedProtection/block",
+      "homepage": "https://github.com/EnergizedProtection/block",
+      "stars": 2837,
+      "pushed_at": "2026-11-05T18:12:47Z",
+      "license": "MIT",
+      "review_required": true
+    },
+    {
+      "repo": "rorygallagher2024/glasshouse",
+      "homepage": "https://github.com/rorygallagher2024/glasshouse",
+      "stars": 1892,
+      "pushed_at": "2026-11-05T20:08:45Z",
+      "license": "MIT",
+      "review_required": true
+    },
+    {
+      "repo": "kota-zo/myspoti",
+      "homepage": "https://github.com/kota-zo/myspoti",
+      "stars": 1415,
+      "pushed_at": "2026-11-05T20:18:02Z",
+      "license": "GPL-3.0",
+      "review_required": true
+    },
+    {
+      "repo": "neodevpro/neodevhost",
+      "homepage": "https://github.com/neodevpro/neodevhost",
+      "stars": 1370,
+      "pushed_at": "2026-11-05T15:50:35Z",
+      "license": "MIT",
+      "review_required": true
+    },
+    {
+      "repo": "zephium-browser/Zephium",
+      "homepage": "https://github.com/zephium-browser/Zephium",
+      "stars": 986,
+      "pushed_at": "2026-11-05T19:05:28Z",
+      "license": "MPL-2.0",
+      "review_required": true
+    },
+    {
+      "repo": "Chocolate4U/Iran-v2ray-rules",
+      "homepage": "https://github.com/Chocolate4U/Iran-v2ray-rules",
+      "stars": 788,
+      "pushed_at": "2026-11-05T03:38:59Z",
+      "license": "GPL-3.0",
+      "review_required": true
+    },
+    {
+      "repo": "AdguardTeam/cname-trackers",
+      "homepage": "https://github.com/AdguardTeam/cname-trackers",
+      "stars": 433,
+      "pushed_at": "2026-11-05T15:51:50Z",
+      "license": "MIT",
+      "review_required": true
+    },
+    {
+      "repo": "pengelana/blocklist",
+      "homepage": "https://github.com/pengelana/blocklist",
+      "stars": 430,
+      "pushed_at": "2026-11-05T16:13:45Z",
+      "license": "MIT",
+      "review_required": true
+    },
+    {
+      "repo": "REBEL-ROOT/omni-browser",
+      "homepage": "https://github.com/REBEL-ROOT/omni-browser",
+      "stars": 395,
+      "pushed_at": "2026-11-05T18:20:06Z",
+      "license": "GPL-3.0",
+      "review_required": true
+    },
+    {
+      "repo": "Zalexanninev15/NoADS_RU",
+      "homepage": "https://github.com/Zalexanninev15/NoADS_RU",
+      "stars": 364,
+      "pushed_at": "2026-11-05T16:42:57Z",
+      "license": "MIT",
+      "review_required": true
+    },
+    {
+      "repo": "Chocolate4U/Iran-sing-box-rules",
+      "homepage": "https://github.com/Chocolate4U/Iran-sing-box-rules",
+      "stars": 349,
+      "pushed_at": "2026-11-05T13:08:57Z",
+      "license": "GPL-3.0",
+      "review_required": true
+    },
+    {
+      "repo": "lingeringsound/adblock_auto",
+      "homepage": "https://github.com/lingeringsound/adblock_auto",
+      "stars": 321,
+      "pushed_at": "2026-11-05T16:28:41Z",
+      "license": "GPL-3.0",
+      "review_required": true
+    },
+    {
+      "repo": "hxreborn/morphe-patches",
+      "homepage": "https://github.com/hxreborn/morphe-patches",
+      "stars": 308,
+      "pushed_at": "2026-11-05T16:22:00Z",
+      "license": "GPL-3.0",
+      "review_required": true
+    },
+    {
+      "repo": "benbalter/adguard-home-docker-compose-ansible-caddy",
+      "homepage": "https://github.com/benbalter/adguard-home-docker-compose-ansible-caddy",
+      "stars": 164,
+      "pushed_at": "2026-11-05T20:29:44Z",
+      "license": "MIT",
+      "review_required": true
+    },
+    {
+      "repo": "shreyagarwal72/petal",
+      "homepage": "https://github.com/shreyagarwal72/petal",
+      "stars": 149,
+      "pushed_at": "2026-11-05T20:31:00Z",
+      "license": "GPL-3.0",
+      "review_required": true
+    },
+    {
+      "repo": "KnightmareVIIVIIXC/AIO-Firebog-Blocklists",
+      "homepage": "https://github.com/KnightmareVIIVIIXC/AIO-Firebog-Blocklists",
+      "stars": 129,
+      "pushed_at": "2026-11-05T20:18:21Z",
+      "license": "GPL-3.0",
+      "review_required": true
+    },
+    {
+      "repo": "abclq/home-dns-adblock",
+      "homepage": "https://github.com/abclq/home-dns-adblock",
+      "stars": 118,
+      "pushed_at": "2026-11-05T19:32:48Z",
+      "license": "MIT",
+      "review_required": true
+    },
+    {
+      "repo": "HoangTran0410/tv-remote",
+      "homepage": "https://github.com/HoangTran0410/tv-remote",
+      "stars": 88,
+      "pushed_at": "2026-11-05T18:01:07Z",
+      "license": "MIT",
+      "review_required": true
+    },
+    {
+      "repo": "Chocolate4U/Iran-clash-rules",
+      "homepage": "https://github.com/Chocolate4U/Iran-clash-rules",
+      "stars": 87,
+      "pushed_at": "2026-11-05T13:31:57Z",
+      "license": "GPL-3.0",
+      "review_required": true
+    },
+    {
+      "repo": "nimasaj/uBOPa",
+      "homepage": "https://github.com/nimasaj/uBOPa",
+      "stars": 33,
+      "pushed_at": "2026-07-20T04:03:54Z",
+      "license": "MIT",
+      "review_required": true
+    },
+    {
+      "repo": "EmamShahrooz-JB/JB-DNS",
+      "homepage": "https://github.com/EmamShahrooz-JB/JB-DNS",
+      "stars": 5,
+      "pushed_at": "2026-10-23T12:04:59Z",
+      "license": "GPL-3.0",
+      "review_required": true
+    },
+    {
+      "repo": "omid-io/digikala-pure-search",
+      "homepage": "https://github.com/omid-io/digikala-pure-search",
+      "stars": 3,
+      "pushed_at": "2026-10-10T14:36:19Z",
+      "license": "MIT",
+      "review_required": true
+    },
+    {
+      "repo": "Arman2122/IR-Geo-DB",
+      "homepage": "https://github.com/Arman2122/IR-Geo-DB",
+      "stars": 2,
+      "pushed_at": "2026-11-05T11:25:06Z",
+      "license": "GPL-3.0",
+      "review_required": true
+    }
+  ],
+  "errors": [],
+  "important": "Candidate listing only; automatic importing is disabled until a human checks rules, parser and license."
+}

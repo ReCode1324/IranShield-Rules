@@ -1,0 +1,40 @@
+{
+  "route": {
+    "rules": [
+      {
+        "rule_set": [
+          "block-ads"
+        ],
+        "action": "reject"
+      },
+      {
+        "ip_is_private": true,
+        "action": "route",
+        "outbound": "direct"
+      },
+      {
+        "rule_set": [
+          "direct-iran-all"
+        ],
+        "action": "route",
+        "outbound": "direct"
+      }
+    ],
+    "rule_set": [
+      {
+        "tag": "block-ads",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/ReCode1324/IranShield-Rules/main/dist/sing-box/block-ads.srs",
+        "update_interval": "24h"
+      },
+      {
+        "tag": "direct-iran-all",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/ReCode1324/IranShield-Rules/main/dist/sing-box/direct-iran-all.srs",
+        "update_interval": "24h"
+      }
+    ]
+  }
+}

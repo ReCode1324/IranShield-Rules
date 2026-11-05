@@ -1,0 +1,14 @@
+{
+  "singbox_srslist": "https://raw.githubusercontent.com/ReCode1324/IranShield-Rules/main/dist/srslist.json",
+  "nekobox_srslist": "https://raw.githubusercontent.com/ReCode1324/IranShield-Rules/main/srslist.json",
+  "xray": {
+    "geosite": "https://raw.githubusercontent.com/ReCode1324/IranShield-Rules/main/dist/xray/iranshield-geosite.dat",
+    "geoip": "https://raw.githubusercontent.com/ReCode1324/IranShield-Rules/main/dist/xray/iranshield-geoip.dat"
+  },
+  "plain": {
+    "ads": "https://raw.githubusercontent.com/ReCode1324/IranShield-Rules/main/dist/plain/ads.txt",
+    "iran_domains": "https://raw.githubusercontent.com/ReCode1324/IranShield-Rules/main/dist/plain/iran-domains.txt",
+    "iran_ips": "https://raw.githubusercontent.com/ReCode1324/IranShield-Rules/main/dist/plain/iran-ips.txt"
+  },
+  "dns_hosts": "https://raw.githubusercontent.com/ReCode1324/IranShield-Rules/main/dist/hosts/ads-hosts.txt"
+}

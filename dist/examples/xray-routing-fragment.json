@@ -1,0 +1,33 @@
+{
+  "domainStrategy": "IPIfNonMatch",
+  "rules": [
+    {
+      "type": "field",
+      "domain": [
+        "ext:iranshield-geosite.dat:ADS"
+      ],
+      "outboundTag": "block"
+    },
+    {
+      "type": "field",
+      "ip": [
+        "geoip:private"
+      ],
+      "outboundTag": "direct"
+    },
+    {
+      "type": "field",
+      "domain": [
+        "ext:iranshield-geosite.dat:IR"
+      ],
+      "outboundTag": "direct"
+    },
+    {
+      "type": "field",
+      "ip": [
+        "ext:iranshield-geoip.dat:IR"
+      ],
+      "outboundTag": "direct"
+    }
+  ]
+}
