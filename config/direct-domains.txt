@@ -1,0 +1,2 @@
+# Extra Iran-hosted domains to route DIRECT (non-.ir included).
+# example-iran-hosted.com

@@ -1,0 +1,39 @@
+{
+  "sources": [
+    {
+      "id": "adguard_dns", "group": "ads-global", "format": "adblock",
+      "url": "https://adguardteam.github.io/AdGuardSDNSFilter/Filters/filter.txt",
+      "license": "GPL-3.0", "required": true, "min_entries": 1000
+    },
+    {
+      "id": "stevenblack_hosts", "group": "ads-global", "format": "hosts",
+      "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts",
+      "license": "MIT; upstream components may have distinct licenses", "required": false, "min_entries": 1000
+    },
+    {
+      "id": "goodbyeads", "group": "ads-global", "format": "hosts",
+      "url": "https://raw.githubusercontent.com/jerryn70/GoodbyeAds/master/Hosts/GoodbyeAds.txt",
+      "license": "MIT", "required": false, "min_entries": 100
+    },
+    {
+      "id": "ubopa", "group": "ads-ir", "format": "adblock",
+      "url": "https://raw.githubusercontent.com/nimasaj/uBOPa/master/uBOPa.txt",
+      "license": "MIT", "required": false, "min_entries": 1
+    },
+    {
+      "id": "iran_hosted_ads", "group": "ads-ir", "format": "clash",
+      "url": "https://raw.githubusercontent.com/bootmortis/iran-hosted-domains/release/clash_rules_ads.txt",
+      "license": "MIT", "required": true, "min_entries": 1
+    },
+    {
+      "id": "iran_hosted_domains", "group": "iran-domains", "format": "domains",
+      "url": "https://raw.githubusercontent.com/bootmortis/iran-hosted-domains/release/domains.txt",
+      "license": "MIT", "required": true, "min_entries": 10000
+    },
+    {
+      "id": "ripe_iran_resources", "group": "iran-ips", "format": "ripe-json",
+      "url": "https://stat.ripe.net/data/country-resource-list/data.json?resource=ir",
+      "license": "RIPEstat data: verify terms for your use", "required": true, "min_entries": 200
+    }
+  ]
+}

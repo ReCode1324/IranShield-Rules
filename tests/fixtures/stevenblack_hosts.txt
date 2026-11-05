@@ -1,0 +1,4 @@
+127.0.0.1 localhost
+0.0.0.0 hosts-ads.mock
+0.0.0.0 host-ads.mock hosts-track.mock
+192.0.2.1 should-not-block.mock

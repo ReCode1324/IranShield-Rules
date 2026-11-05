@@ -1,0 +1,4 @@
+# User-maintained exceptions: a root domain here disables blocking of that domain
+# and of any BLOCK parent encompassing it (false-positive-safe).
+# Keep this list short and explicit. Example:
+# accounts.example.org

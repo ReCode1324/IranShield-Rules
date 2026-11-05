@@ -1,0 +1,8 @@
+! DNS blocking examples
+||ads.global.mock^ 
+||tracker.global.mock^
+||critical.mock^
+@@||critical.mock^
+||static.mock^$third-party
+example.net##.ad
+/regex/

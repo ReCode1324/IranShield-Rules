@@ -1,0 +1,2 @@
+# User-maintained domain blocks (root + subdomains). One domain per line.
+# ads.example.org

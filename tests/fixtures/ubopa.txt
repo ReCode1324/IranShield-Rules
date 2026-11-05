@@ -1,0 +1,3 @@
+! Persian
+||ads.persian.mock^
+foo.mock##.ads

@@ -1,0 +1,2 @@
+# Extra Iran IPv4/IPv6 CIDRs, one per line.
+# 192.0.2.0/24

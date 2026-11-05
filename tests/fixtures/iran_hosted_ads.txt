@@ -1,0 +1,3 @@
+# Clash domain-set sample
++.ads.ir
+DOMAIN-SUFFIX,promo.ir,REJECT
