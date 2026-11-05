@@ -1,8 +1,8 @@
 # 🛡️ IranShield Rules — قوانین ایرانی + مسدودسازی تبلیغات برای sing-box و Xray
 
-یک ریپوی شخصی و قابل Fork برای ساخت فهرست‌های **BLOCK تبلیغات** و **DIRECT ایران** که هر ماه با GitHub Actions به‌روز می‌شود و خروجی‌های مستقل برای **sing-box** و **Xray (v2rayN / v2rayNG)** دارد.
+یک ریپوی شخصی و قابل Fork برای ساخت فهرست‌های **BLOCK تبلیغات** و **DIRECT ایران** که ماهی دو بار با GitHub Actions به‌روز می‌شود و خروجی‌های مستقل برای **sing-box** و **Xray (v2rayN / v2rayNG)** دارد.
 
-> **شروع سریع:** فایل‌های پروژه را در یک مخزن GitHub روی شاخه `main` آپلود کنید؛ سپس `Actions` → `Monthly IranShield Rules Update` → `Run workflow` را یک بار اجرا کنید. بدون اجرای موفق Workflow، فایل‌های خروجی `dist/` هنوز وجود ندارند. برای استفاده از لینک‌های مستقیم `raw.githubusercontent.com` بهتر است مخزن عمومی (public) باشد. مخزن خصوصی برای مصرف از راه دور نیاز به روش احراز هویت دارد؛ توکن را در URL نگذارید.
+> **شروع سریع:** فایل‌های پروژه را در یک مخزن GitHub روی شاخه `main` آپلود کنید؛ سپس `Actions` → `Twice-Monthly IranShield Rules Update` → `Run workflow` را یک بار اجرا کنید. بدون اجرای موفق Workflow، فایل‌های خروجی `dist/` هنوز وجود ندارند. برای استفاده از لینک‌های مستقیم `raw.githubusercontent.com` بهتر است مخزن عمومی (public) باشد. مخزن خصوصی برای مصرف از راه دور نیاز به روش احراز هویت دارد؛ توکن را در URL نگذارید.
 
 ## قابلیت‌ها
 
@@ -17,7 +17,8 @@
 
 ```text
 dist/
-├── srslist.json                       # کلید ↔ لینک مستقیم SRS، شبیه نمونه شما
+├── srslist.json                       # نام ↔ لینک SRS
+├── nekobox/srslist.json               # فهرست مجزا برای NekoBox
 ├── assets.json                        # لینک خروجی همه هسته‌ها و plain/hosts
 ├── manifest.json                      # تعداد، آدرس/مجوز منبع، SHA-256
 ├── discovered-sources.json            # کشف کاندیداها، نه افزودن خودکار آنها
@@ -42,16 +43,26 @@ dist/
 ## تنظیم GitHub — فقط یک بار
 
 1. در GitHub یک مخزن تازه با نام اختیاری `IranShield-Rules` بسازید (نام واقعی می‌تواند متفاوت باشد). محتویات این پروژه را در ریشه شاخه `main` قرار دهید (خود پوشه را به‌صورت زیرپوشه آپلود نکنید).
-2. از منوی `Actions`، در صورت نیاز Workflowها را فعال کنید و `Monthly IranShield Rules Update` را با دکمه `Run workflow` اجرا کنید. انتظار می‌رود منابع اینترنتی و نسخه رسمی sing-box در runner قابل دسترسی باشند.
+2. از منوی `Actions`، در صورت نیاز Workflowها را فعال کنید و `Twice-Monthly IranShield Rules Update` را با دکمه `Run workflow` اجرا کنید. انتظار می‌رود منابع اینترنتی و نسخه رسمی sing-box در runner قابل دسترسی باشند.
 3. پس از موفقیت، فایل‌های `dist/` به همان ریپو commit می‌شوند. لینک‌های `srslist.json` به طور خودکار از مقدار واقعی `${{ github.repository }}` ساخته می‌شوند؛ نیازی به ویرایش دستی نام کاربری نیست.
-4. به‌روزرسانی بعدی **روز پنجم هر ماه ساعت 03:17 UTC** اجرا می‌شود. امکان اجرای دستی در هر زمان هم وجود دارد. GitHub ممکن است اجرای زمان‌بندی‌شده را با تأخیر انجام دهد یا در مخزن غیرفعال غیرفعال کند.
+4. به‌روزرسانی بعدی **روزهای اول و پانزدهم هر ماه ساعت 03:17 UTC** اجرا می‌شود. امکان اجرای دستی در هر زمان هم وجود دارد. GitHub ممکن است اجرای زمان‌بندی‌شده را با تأخیر انجام دهد یا در مخزن غیرفعال غیرفعال کند.
 5. برای تغییر منابع `config/sources.json`، و برای سفارشی‌سازی `config/blocklist.txt`، `config/allowlist.txt`، `config/direct-domains.txt` و `config/direct-ip.txt` را ویرایش کنید. سپس Workflow را دوباره اجرا کنید.
+
+## NekoBox: فایل اختصاصی و آپدیت دو بار در ماه
+
+- فایل `srslist.json` در **ریشهٔ ریپو** (و کپی‌های برابر در `nekobox/srslist.json`، `dist/srslist.json` و `dist/nekobox/srslist.json`) مطابق فرمت کلید→لینک نمونهٔ NekoBox تولید می‌شود. پیش از اولین اجرا مقدار `YOUR_USERNAME` صرفاً نمونه است؛ Workflow با اطلاعات واقعی ریپوی شما جایگزین می‌کند.
+- لینک ثابت و ساده: `https://raw.githubusercontent.com/OWNER/REPO/main/srslist.json`؛ `OWNER/REPO` را متناسب با مخزن خودتان تغییر دهید. در صورت متفاوت بودن شاخهٔ پیش‌فرض، `main` را با نام آن جایگزین کنید.
+- NekoBox این قالب را برای **نگاشت نام Rule-set به فایل SRS** استفاده می‌کند، نه برای وارد کردن اشتراک سرور. اگر نسخهٔ برنامه به شما امکان استفاده از فایل محلی `srslist.json` می‌دهد، آن را مطابق مسیر تنظیمات/نصب همان نسخه جایگزین کنید. استفاده از URL این فایل به‌تنهایی تضمین نمی‌کند کلاینت خودش فهرست را دوباره بارگیری کند؛ باید فایل/لیست را refresh کنید یا قوانین remote SRS داشته باشید.
+- فایل‌های `.srs` در GitHub روزهای **۱ و ۱۵** ماه ساعت **03:17 UTC** تازه می‌شوند، مشروط به موفقیت اجرای Workflow. هنگام استفاده از remote rule-set با `update_interval` (برای مثال `24h`) کلاینت می‌تواند آخرین فایل `.srs` را مستقل از زمان ساخت چک کند. چگونگی این رفتار به پشتیبانی نسخه NekoBox بستگی دارد.
+- محدودیت: `srslist.json` فهرست است، نه فایل تنظیمات مسیریابی. برای بلوک‌شدن تبلیغات و دایرکت‌شدن ایران باید در NekoBox قوانینی با برچسب‌های `block-ads` و `direct-iran-all` را به ترتیب به **Reject/Block** و **Direct** متصل کنید. ساختار پیشنهادی در `dist/examples/singbox-route-fragment.json` ارائه می‌شود.
 
 ## لینک‌های استفاده
 
 بعد از آپلود و نخستین اجرای موفق، در آدرس‌های زیر `OWNER` و `REPO` را با نام کاربری/سازمان و نام ریپوی واقعی خودتان جایگزین کنید:
 
 ```text
+https://raw.githubusercontent.com/OWNER/REPO/main/srslist.json
+https://raw.githubusercontent.com/OWNER/REPO/main/dist/nekobox/srslist.json
 https://raw.githubusercontent.com/OWNER/REPO/main/dist/srslist.json
 https://raw.githubusercontent.com/OWNER/REPO/main/dist/assets.json
 https://raw.githubusercontent.com/OWNER/REPO/main/dist/sing-box/block-ads.srs
@@ -116,7 +127,7 @@ python scripts/build.py --fixtures tests/fixtures --out .temp/sample-dist --repo
 
 ## کنترل کیفیت، حریم خصوصی و محدودیت‌ها
 
-- `config/sources.json` **منابع معتبر بازبینی‌شده** است. اسکریپت `discover.py` هر ماه ریپوهای فعال و معروف GitHub را جست‌وجو و فهرست می‌کند؛ **بدون بررسی مجوز، صحت محتوا و ریسک false positive، منبع ناشناخته را خودکار به BLOCK اضافه نمی‌کند**. برای اضافه‌کردن منبع جدید، آن را با نوع فرمت و `min_entries` به config اضافه کنید.
+- `config/sources.json` **منابع معتبر بازبینی‌شده** است. اسکریپت `discover.py` دو بار در ماه ریپوهای فعال و معروف GitHub را جست‌وجو و فهرست می‌کند؛ **بدون بررسی مجوز، صحت محتوا و ریسک false positive، منبع ناشناخته را خودکار به BLOCK اضافه نمی‌کند**. برای اضافه‌کردن منبع جدید، آن را با نوع فرمت و `min_entries` به config اضافه کنید.
 - فیلترهای CSS، HTML، اسکریپتی، آدرس‌های path-specific و استثناهای با modifier پیچیده در uBlock/AdGuard به قوانین سطح دامنه قابل تبدیل مطمئن نیستند؛ عمداً حذف می‌شوند. بنابراین «۱۰۰٪ همه تبلیغات» با Xray یا sing-box امکان‌پذیر نیست. برای تبلیغات تزریق‌شده در همان دامنه سایت، افزونه مرورگر uBlock Origin مکمل خوبی است.
 - داده IP از تخصیص‌ها و ثبت‌های RIPE می‌آید؛ **تضمین نمی‌کند هر IP در این مجموعه از نظر جغرافیایی داخل ایران باشد**. میزبانی و مسیرها تغییر می‌کنند. برخی آی‌پی‌های داخل ایران ممکن است خارج از این داده باشند.
 - برخی فهرست‌ها مجوز انتشار مجدد متفاوت دارند. مجوز منابع در `config/sources.json` و `manifest.json` ذکر می‌شود. فهرست‌های دارای محدودیت بازنشر مثل بعضی نسخه‌های Hagezi یا داده‌های IPdeny عمداً وارد خروجی نشده‌اند. داده‌های تبدیل‌شده AdGuard تابع GPL-3.0 هستند؛ استفاده یا بازنشر را مطابق مجوز هر منبع انجام دهید. پروژه با هیچ منبعی وابستگی رسمی ندارد.
@@ -137,3 +148,11 @@ python scripts/build.py --fixtures tests/fixtures --out .temp/sample-dist --repo
 ## مجوز
 
 کد و فایل‌های اصلی پروژه تحت **GPL-3.0** منتشر می‌شوند (فایل `LICENSE`). حقوق فهرست‌های ثالث و مجوزهای مختص آن‌ها محفوظ است؛ به‌ویژه خروجی ترکیبی نباید برخلاف شرایط بازنشر منابع منتشر شود.
+
+## رفع خطای NekoBox srslist.json در GitHub Actions
+
+اگر لاگ نشان داد `cp: cannot stat 'dist/nekobox/srslist.json'`، نسخهٔ فعلی
+`.github/workflows/update-rules.yml` این مشکل را برطرف می‌کند: فهرست
+را **مستقلاً از شش فایل SRS کامپایل‌شده** می‌سازد و در چهار مسیر یکسان
+منتشر می‌کند. برای دستورالعمل جایگزینی فایل و اجرای مجدد،
+`docs/FIX-NEKOBOX-INDEX.md` را ببینید.

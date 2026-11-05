@@ -219,7 +219,7 @@ def rules_for_ips(ips: list[str]) -> list[dict]:
     return [{"ip_cidr": ips[i : i + 1200]} for i in range(0, len(ips), 1200)]
 
 
-def build(out: Path, fixture_dir: Path | None, repository: str, min_total: bool) -> dict:
+def build(out: Path, fixture_dir: Path | None, repository: str, min_total: bool, branch: str = "main") -> dict:
     sources = json.loads((ROOT / "config/sources.json").read_text(encoding="utf-8"))["sources"]
     collected: dict[str, set[str]] = defaultdict(set)
     all_exceptions: set[str] = set()
@@ -283,7 +283,7 @@ def build(out: Path, fixture_dir: Path | None, repository: str, min_total: bool)
             "IR": ir_domains,
         }))
         (stage / "xray/iranshield-geoip.dat").write_bytes(make_geoip({"IR": ir_ips}))
-        base = f"https://raw.githubusercontent.com/{repository}/main/dist/sing-box/"
+        base = f"https://raw.githubusercontent.com/{repository}/{branch}/dist/sing-box/"
         aliases = {
             "geosite-category-ads-all": "block-ads", "geosite-ads": "block-ads",
             "geosite-ads-ir": "block-ads-ir", "geosite-ads-global": "block-ads-global",
@@ -292,7 +292,12 @@ def build(out: Path, fixture_dir: Path | None, repository: str, min_total: bool)
             "block-ads-global": "block-ads-global", "direct-iran-domains": "direct-iran-domains",
             "direct-iran-ips": "direct-iran-ips", "direct-iran-all": "direct-iran-all",
         }
-        write_json(stage / "srslist.json", {alias: base + target + ".srs" for alias, target in aliases.items()})
+        # NekoBox (including this fork) uses a flat name -> remote SRS URL map.
+        # Keep copies at dist/srslist.json, dist/nekobox/srslist.json and the
+        # repository root (published by the workflow).
+        neko_srslist = {alias: base + target + ".srs" for alias, target in aliases.items()}
+        write_json(stage / "srslist.json", neko_srslist)
+        write_json(stage / "nekobox/srslist.json", neko_srslist)
         plain = stage / "plain"
         plain.mkdir()
         for name, values in {
@@ -303,9 +308,10 @@ def build(out: Path, fixture_dir: Path | None, repository: str, min_total: bool)
         hosts = stage / "hosts"
         hosts.mkdir()
         (hosts / "ads-hosts.txt").write_text("# IranShield DNS hosts list; domain-level only\n" + "".join(f"0.0.0.0 {host}\n" for host in ads), encoding="utf-8")
-        rawbase = f"https://raw.githubusercontent.com/{repository}/main/dist/"
+        rawbase = f"https://raw.githubusercontent.com/{repository}/{branch}/dist/"
         write_json(stage / "assets.json", {
             "singbox_srslist": rawbase + "srslist.json",
+            "nekobox_srslist": f"https://raw.githubusercontent.com/{repository}/{branch}/srslist.json",
             "xray": {"geosite": rawbase + "xray/iranshield-geosite.dat", "geoip": rawbase + "xray/iranshield-geoip.dat"},
             "plain": {"ads": rawbase + "plain/ads.txt", "iran_domains": rawbase + "plain/iran-domains.txt", "iran_ips": rawbase + "plain/iran-ips.txt"},
             "dns_hosts": rawbase + "hosts/ads-hosts.txt",
@@ -358,10 +364,13 @@ def main() -> None:
     parser.add_argument("--out", type=Path, default=ROOT / "dist")
     parser.add_argument("--fixtures", type=Path, help="Use local sample inputs; never access the network")
     parser.add_argument("--repository", default=os.environ.get("GITHUB_REPOSITORY", "YOUR_USERNAME/IranShield-Rules"))
+    parser.add_argument("--branch", default=os.environ.get("GITHUB_REF_NAME", "main"))
     args = parser.parse_args()
     if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", args.repository):
         parser.error("repository must be GitHub OWNER/REPO")
-    report = build(args.out.resolve(), args.fixtures, args.repository, True)
+    if not re.fullmatch(r"[A-Za-z0-9_.\/-]+", args.branch) or args.branch.startswith("/") or ".." in args.branch:
+        parser.error("branch contains unsafe characters")
+    report = build(args.out.resolve(), args.fixtures, args.repository, True, args.branch)
     print(json.dumps(report["counts"], indent=2))
 
 

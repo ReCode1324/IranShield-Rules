@@ -95,8 +95,20 @@ class IranShieldTests(unittest.TestCase):
             self.assertIn("ads.persian.mock", elements)
             self.assertIn("ads.ir", elements)
             self.assertIn("ir", json.loads((output / "sing-box/direct-iran-domains.json").read_text())["rules"][0]["domain_suffix"])
-            self.assertTrue(json.loads((output / "srslist.json").read_text())["geosite-ir"].endswith("direct-iran-domains.srs"))
+            index = json.loads((output / "srslist.json").read_text())
+            self.assertTrue(index["geosite-ir"].endswith("direct-iran-domains.srs"))
+            self.assertEqual(index, json.loads((output / "nekobox/srslist.json").read_text()))
+            self.assertTrue(index["geosite-category-ads-all"].endswith("block-ads.srs"))
+            self.assertIn("geoip-ir", index)
+            self.assertIn("/example/IranShield-Rules/main/dist/", index["geoip-ir"])
             self.assertEqual(len(json.loads((output / "examples/v2rayN-custom-routing.json").read_text())), 4)
+
+    def test_alternative_default_branch(self):
+        with tempfile.TemporaryDirectory() as temp:
+            output = Path(temp) / "dist"
+            build(output, ROOT / "tests/fixtures", "myowner/myrepo", False, branch="rule-set")
+            index = json.loads((output / "nekobox/srslist.json").read_text())
+            self.assertIn("/myowner/myrepo/rule-set/", index["block-ads"])
 
     def test_fail_closed_preserves_last_good(self):
         import shutil
