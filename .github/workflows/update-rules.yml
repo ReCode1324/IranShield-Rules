@@ -57,12 +57,7 @@ jobs:
         run: python scripts/finalize.py dist
 
       - name: Publish NekoBox srslist.json at the repository root
-        run: |
-          cp dist/nekobox/srslist.json srslist.json
-          cp dist/nekobox/srslist.json nekobox/srslist.json
-          python -m json.tool srslist.json >/dev/null
-          cmp srslist.json dist/srslist.json
-          cmp srslist.json nekobox/srslist.json
+        run: python scripts/publish.py --dist dist
 
       - name: Commit updated rules into this repository
         run: |
