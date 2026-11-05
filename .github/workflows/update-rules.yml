@@ -51,6 +51,7 @@ jobs:
           set -euo pipefail
           for json in dist/sing-box/*.json; do
             "$HOME/.local/bin/sing-box" rule-set compile --output "${json%.json}.srs" "$json"
+            "$HOME/.local/bin/sing-box" rule-set decompile "${json%.json}.srs"
           done
 
       - name: Check output completeness and hashes
