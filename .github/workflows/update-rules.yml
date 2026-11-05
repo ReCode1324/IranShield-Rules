@@ -1,6 +1,5 @@
 name: Twice-Monthly IranShield Rules Update
 
-# Runs on the 1st and 15th of each month at 03:17 UTC.
 "on":
   schedule:
     - cron: '17 3 1,15 * *'
@@ -10,15 +9,16 @@ permissions:
   contents: write
 
 concurrency:
-  group: iranshield-rules-update
+  group: iranshield-twice-monthly-build
   cancel-in-progress: false
 
 jobs:
   update:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     timeout-minutes: 45
+
     steps:
-      - name: Check out the default branch
+      - name: Check out repository
         uses: actions/checkout@v4
         with:
           persist-credentials: true
@@ -31,82 +31,88 @@ jobs:
       - name: Run offline regression tests
         run: python -m unittest discover -s tests -v
 
-      - name: Build domain and IP rules from configured sources
+      - name: Build verified domain and IP rules
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_REF_NAME: ${{ github.ref_name }}
         run: python scripts/build.py --out dist
 
-      - name: Discover updated upstream repositories (informational only)
+      - name: Audit updated upstream repositories
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python scripts/discover.py dist/discovered-sources.json
 
-      - name: Install official pinned sing-box and verify SHA-256
+      - name: Install pinned official sing-box release with SHA-256 verification
+        shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        shell: bash
         run: |
           set -euo pipefail
           python scripts/install_sing_box.py
           "$HOME/.local/bin/sing-box" version
 
-      - name: Compile and validate the six SRS files
+      - name: Compile and verify every SRS file
         shell: bash
         run: |
           set -euo pipefail
           shopt -s nullglob
+
           sources=(dist/sing-box/*.json)
+
           if (( ${#sources[@]} != 6 )); then
-            echo "ERROR: Expected six source JSON files; got ${#sources[@]}" >&2
+            echo "Expected exactly 6 SRS source JSON files; found ${#sources[@]}" >&2
             exit 1
           fi
-          mkdir -p "$RUNNER_TEMP/iranshield-verified"
+
+          verify_dir="$(mktemp -d)"
+          trap 'rm -rf "$verify_dir"' EXIT
+
           for json in "${sources[@]}"; do
-            srs="${json%.json}.srs"
-            "$HOME/.local/bin/sing-box" rule-set compile --output "$srs" "$json"
-            decoded="$RUNNER_TEMP/iranshield-verified/$(basename "${json%.json}").json"
-            "$HOME/.local/bin/sing-box" rule-set decompile --output "$decoded" "$srs"
-            python -m json.tool "$decoded" >/dev/null
+            "$HOME/.local/bin/sing-box" rule-set compile --output "${json%.json}.srs" "$json"
+
+            "$HOME/.local/bin/sing-box" rule-set decompile --output "$verify_dir/$(basename "$json")" "${json%.json}.srs"
+
+            python -m json.tool "$verify_dir/$(basename "$json")" >/dev/null
           done
 
-      - name: Publish NekoBox srslist.json from compiled binaries
-        shell: bash
+      - name: Publish NekoBox srslist.json
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_REF_NAME: ${{ github.ref_name }}
-        run: |
-          set -euo pipefail
-          python scripts/publish.py --out dist
+        run: python scripts/publish.py --out dist
 
-      - name: Verify output and generate SHA-256 manifest
+      - name: Validate published files and SHA-256 manifest
         shell: bash
         run: |
           set -euo pipefail
+
           python scripts/finalize.py dist
+
           python -m json.tool srslist.json >/dev/null
+
           cmp srslist.json nekobox/srslist.json
           cmp srslist.json dist/srslist.json
           cmp srslist.json dist/nekobox/srslist.json
 
-      - name: Commit updated rules and NekoBox indexes
+      - name: Commit and push updated rules
         shell: bash
-        env:
-          BRANCH: ${{ github.ref_name }}
         run: |
           set -euo pipefail
+
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
           git add -- dist/ srslist.json nekobox/srslist.json
-          if git diff --cached --quiet; then
+
+          if git diff --staged --quiet; then
             echo 'No changes to publish.'
           else
-            git commit -m "chore(rules): refresh $(date -u +%Y-%m-%d)"
-            git push origin "HEAD:${BRANCH}"
+            git commit -m "chore(rules): twice-monthly refresh $(date -u +%Y-%m-%d)"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
           fi
 
-      - name: Upload downloadable rules archive
+      - name: Upload downloadable build artifact
         uses: actions/upload-artifact@v4
         with:
           name: iranshield-rules
